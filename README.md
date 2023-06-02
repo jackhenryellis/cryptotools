@@ -5,7 +5,7 @@ Miscellaneous cryptography tools for performing encryption and decryption on the
 > $ git clone https://github.com/jackhenryellis/cryptotools  
 
 **If you want to import cryptotools to use in your own programs**
-> $ cd cryptotools
+> $ cd cryptotools  
 > $ pip install .
 
 ## Usage
