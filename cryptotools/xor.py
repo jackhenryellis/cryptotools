@@ -1,3 +1,4 @@
+import argparse
 import convert
 
 def xor(message:str, key:str, output='ascii') -> str:
@@ -11,10 +12,14 @@ def xor(message:str, key:str, output='ascii') -> str:
     BIN_BASE = 2
 
     # perform input sanitation
+    if message is None:
+        return("Message is missing. -m <message_to_XOR>")
+    if key is None:
+        return("Key is missing. -k <XOR_key>")
     if type(message) is not str:
-        raise TypeError("Invalid message format (must be ascii, bin, or hex)")
+        return("Invalid message format (must be ascii, bin, or hex)")
     if type(key) is not str:
-        raise TypeError("Invalid key format (must be ascii, bin, or hex)")
+        return("Invalid key format (must be ascii, bin, or hex)")
     message_is_bin = True
     message_is_hex = True
     key_is_bin = True
@@ -41,7 +46,7 @@ def xor(message:str, key:str, output='ascii') -> str:
         try:
             message.encode('ascii')
         except:
-            raise TypeError("Invalid message format (must be ascii, bin, or hex)")
+            return("Invalid message format (must be ascii, bin, or hex)")
     # CHECK KEY TYPE
     try:
         # check if key is binary
@@ -64,7 +69,7 @@ def xor(message:str, key:str, output='ascii') -> str:
         try:
             key.encode('ascii')
         except:
-            raise TypeError("Invalid key format (must be ascii, bin, or hex)")
+            return("Invalid key format (must be ascii, bin, or hex)")
 
     # convert message to hex
     if message_is_bin:
@@ -118,75 +123,29 @@ def xor(message:str, key:str, output='ascii') -> str:
 
 
 if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description="""
+    xor is a dynamic XOR utility
+    that takes 2 inputs [message, key] in the form of binary, hexademical, or ascii
+    and returns the XOR result in either binary, hexademical, or ascii (default)
 
-    """XOR binary + binary"""
-    bin_bin_result = xor('01101010', '10101111', output='bin')
-    print(bin_bin_result)
-    # 01101010
-    # 10101111
-    # --------
-    # 11000101
+    example usage:
+        xor.py -m 01101010 -k 10101111 -o bin
+        11000101
+
+        xor.py --message secret --key a1 --output hex
+        d2c4c2d3c4d5
+
+        xor.py -m d2c4c2d3c4d5 -k a1 -o ascii
+        secret
+        """)
+
+    parser.add_argument("-m", "--message", help="The message to XOR. -m <message> -k <key> -o <output type>")
+    parser.add_argument("-k", "--key", help="The XOR key (may be in binary, hexademical, or ascii)")
+    parser.add_argument("-o", "--output", help="The output type [bin, hex, ascii(default)]")
+
+    args = parser.parse_args()
     
-    """XOR binary + hex"""
-    bin_hex_result = xor('10101010', '2f', output='bin') # 2f = 00101111
-    print(bin_hex_result)
-    # 10101010
-    # 00101111
-    # --------
-    # 10000101
-    
-    """XOR binary + ascii"""
-    bin_asc_result = xor('01010101', 'G', output='bin') # G = 01000111
-    print(bin_asc_result)
-    # 01010101
-    # 01000111
-    # --------
-    # 00010010
-    
-    """XOR hex + binary"""
-    hex_bin_result = xor('3e', '01101001', output='bin') # 3e = 00111110
-    print(hex_bin_result)
-    # 00111110
-    # 01101001
-    # --------
-    # 01010111
-
-    """XOR hex + hex"""
-    hex_hex_result = xor('1bf2', '213c', output='bin') # 1bf2 = 0001101111110010
-    print(hex_hex_result)                              # 213c = 0010000100111100
-    # 0001101111110010
-    # 0010000100111100
-    # ----------------
-    # 0011101011001110
-
-    """XOR hex + ascii"""
-    hex_asc_result = xor('776f77', 'hey', output='bin') # 776f77 = 011101110110111101110111
-    print(hex_asc_result)                               # hey    = 011010000110010101111001
-    # 011010000110010101111001
-    # 011101110110111101110111
-    # ------------------------
-    # 000111110000101000001110
-
-    """XOR ascii + bin"""
-    asc_bin_result = xor('guess', '1000', output='bin') # guess = 0110011101110101011001010111001101110011
-    print(asc_bin_result)
-    # 0110011101110101011001010111001101110011
-    # 1000100010001000100010001000100010001000
-    # ----------------------------------------
-    # 1110111111111101111011011111101111111011
-
-    """XOR ascii + hex"""
-    asc_hex_result = xor('this', 'fe', output='bin') # this = 01110100011010000110100101110011
-    print(asc_hex_result)                            # fe   = 11111110111111101111111011111110
-    # 01110100011010000110100101110011
-    # 11111110111111101111111011111110
-    # --------------------------------
-    # 10001010100101101001011110001101
-
-    """XOR ascii + ascii"""
-    asc_asc_result = xor('bite', 'me', output='bin') # bite = 01100010011010010111010001100101
-    print(asc_asc_result)                            # me   = 01101101011001010110110101100101
-    # 01100010011010010111010001100101
-    # 01101101011001010110110101100101
-    # --------------------------------
-    # 00001111000011000001100100000000
+    if args.output:
+        print(xor(args.message, args.key, args.output))
+    else:
+        print(xor(args.message, args.key))
